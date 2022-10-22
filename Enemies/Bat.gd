@@ -20,6 +20,7 @@ var state = CHASE
 onready var stats = $Stats
 onready var player_detection_zone = $PlayerDetectionZone
 onready var sprite = $AnimatedSprite
+onready var hurt_box = $HurtBox
 
 func _physics_process(delta):
 	# Friction
@@ -52,6 +53,7 @@ func seek_player():
 func _on_HurtBox_area_entered(area):
 	stats.health -= area.damage
 	knockback = area.knockback_vector * 120
+	hurt_box.create_effect()
 
 func _on_Stats_no_health():
 	create_effect()
