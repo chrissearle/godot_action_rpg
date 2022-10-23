@@ -22,7 +22,9 @@ onready var animation_tree = $AnimationTree
 onready var animation_state = animation_tree.get("parameters/playback")
 onready var sword_hitbox = $HitboxPivot/SwordHitBox
 onready var hurt_box = $HurtBox
+onready var blink_animation_player = $BlinkAnimationPlayer
 
+const PLAYER_HURT_SOUND = preload("res://Player/PlayerHurtSound.tscn")
 
 func _ready():
 	stats.connect("no_health", self, "queue_free")
@@ -38,11 +40,11 @@ func _physics_process(delta):
 		ATTACK:
 			attack_state(delta)
 
-func attack_state(delta):
+func attack_state(_delta):
 	velocity = Vector2.ZERO
 	animation_state.travel("Attack")
 
-func roll_state(delta):
+func roll_state(_delta):
 	velocity = roll_vector * ROLL_SPEED
 	animation_state.travel("Roll")
 	move()
@@ -91,6 +93,16 @@ func move():
 
 
 func _on_HurtBox_area_entered(area):
-	stats.health -= 1
-	hurt_box.start_invincibility(0.5)
+	stats.health -= area.damage
+	hurt_box.start_invincibility(0.6)
 	hurt_box.create_effect()
+	var player_hurt_sound = PLAYER_HURT_SOUND.instance()
+	get_tree().current_scene.add_child(player_hurt_sound)
+
+
+func _on_HurtBox_invincibility_started():
+	blink_animation_player.play("Start")
+
+
+func _on_HurtBox_invincibility_ended():
+	blink_animation_player.play("Stop")

@@ -2,7 +2,7 @@ extends Node2D
 
 const EFFECT = preload("res://Effects/GrassEffect.tscn")
 
-func _on_HurtBox_area_entered(area):
+func _on_HurtBox_area_entered(_area):
 	create_effect()
 	queue_free()
 

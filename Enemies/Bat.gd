@@ -23,6 +23,7 @@ onready var sprite = $AnimatedSprite
 onready var hurt_box = $HurtBox
 onready var soft_collision = $SoftCollision
 onready var wander_controller = $WanderController
+onready var animation_player = $AnimationPlayer
 
 func _ready():
 	pick_wander_state()
@@ -87,6 +88,7 @@ func _on_HurtBox_area_entered(area):
 	stats.health -= area.damage
 	knockback = area.knockback_vector * 120
 	hurt_box.create_effect()
+	hurt_box.start_invincibility(0.4)
 
 func _on_Stats_no_health():
 	create_effect()
@@ -97,3 +99,10 @@ func create_effect():
 	
 	get_parent().add_child(effect)
 	effect.global_position = global_position
+
+
+func _on_HurtBox_invincibility_started():
+	animation_player.play("Start")
+
+func _on_HurtBox_invincibility_ended():
+	animation_player.play("Stop")
